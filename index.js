@@ -22,32 +22,47 @@ p.style.color="red";
 
 }
 
-let data={}
+let data=[]
 let acceptData=()=>{
-    data["text"]=task.value;
+    data.push({text:task.value});
+    localStorage.setItem("data",JSON.stringify(data))
     console.log(data)
     displayData()
 }
 
 let displayData=()=>{
-post.innerHTML +=` <div class="list"><p>${data.text}
-</p>
-<span class="option">
+    post.innerHTML="";
+    data.map((x,y)=>{
+        return(
 
-<i  onclick="editPost(this)"class="fas fa-edit"></i>
-<i onclick="deletePost(this)" class="fas fa-trash-alt"></i>
-</span>
-</div>`
+            post.innerHTML +=` <div id=${y} class="list"><p>${x.text}
+            </p>
+            <span class="option">
+            
+            <i  onclick="editPost(this)"class="fas fa-edit"></i>
+            <i onclick="deletePost(this)" class="fas fa-trash-alt"></i>
+            </span>
+            </div>`
+        )
+    })
 task.value=""
 }
 
 
 let deletePost=(e)=>{
-    e.parentElement.parentElement.remove()
+    e.parentElement.parentElement.remove();
+    data.splice(e.parentElement.parentElement.id,1);
+    localStorage.setItem("data",JSON.stringify(data));
 
 }
 
 let editPost=(e)=>{
     task.value=e.parentElement.previousElementSibling.innerHTML;
-    e.parentElement.parentElement.remove()
+    // e.parentElement.parentElement.remove()
+    deletePost(e);
 }
+
+(()=>{
+    data=JSON.parse(localStorage.getItem("data")) ||[];
+    displayData()
+})();
